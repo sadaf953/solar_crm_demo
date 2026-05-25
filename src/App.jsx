@@ -815,7 +815,10 @@ function UserManagementView({ currentUser }) {
 
     const fetchProfiles = async () => {
         setLoading(true);
-        const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabase.from('profiles')
+            .select('*')
+            .eq('status', 'active')
+            .order('created_at', { ascending: false });
         if (!error) setProfiles(data || []);
         setLoading(false);
     };
@@ -839,6 +842,29 @@ function UserManagementView({ currentUser }) {
         if (!error) alert(`Password reset email sent to ${email}`);
         else alert(`Error: ${error.message}`);
     };
+
+const deactivateUser = async (userId) => {
+  try {
+    const response = await fetch(
+      "https://vpsuvtopsyuafbrjyinr.supabase.co/functions/v1/smooth-worker",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
+        },
+        body: JSON.stringify({ user_id: userId })
+      }
+    )
+
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error)
+
+    setProfiles(profiles.filter(p => p.id !== userId))
+  } catch (err) {
+    console.error("Error deactivating user:", err.message)
+  }
+}
 
     const USER_TYPE_OPTIONS = ['admin', 'sales', 'agent'];
     const ROLE_OPTIONS = ['Manager', 'Sales Executive', 'Field Agent', 'Operations', 'Finance'];
@@ -918,12 +944,20 @@ function UserManagementView({ currentUser }) {
                                     <td className="px-4 py-3">
                                         <div className="flex items-center gap-1 justify-end">
                                             {profile.id !== currentUser.id && (
-                                                <button
-                                                    onClick={() => handleResetPassword(profile.email)}
-                                                    title="Send password reset email"
-                                                    className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                                    <RefreshCw className="w-3.5 h-3.5" />
-                                                </button>
+                                                <>
+                                                    <button
+                                                        onClick={() => handleResetPassword(profile.email)}
+                                                        title="Send password reset email"
+                                                        className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                                        <RefreshCw className="w-3.5 h-3.5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => deactivateUser(profile.id)}
+                                                        title="Deactivate user"
+                                                        className="px-3 py-2 text-sm text-gray-700 hover:text-orange-700 hover:bg-orange-50 rounded-lg transition-colors">
+                                                        Deactivate
+                                                        </button>
+                                                </>
                                             )}
                                             {profile.id === currentUser.id && (
                                                 <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">You</span>
