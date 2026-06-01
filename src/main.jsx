@@ -8,3 +8,9 @@ createRoot(document.getElementById('root')).render(
         <App />
     </StrictMode>,
 )
+
+import { HashRouter } from 'react-router-dom'
+// ...
+<HashRouter>
+  <App />
+</HashRouter>
