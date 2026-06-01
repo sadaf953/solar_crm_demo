@@ -8,13 +8,7 @@ import {
 const BRANCHES = ['Srikalahasti', 'Tirupati', 'Tada', 'Puttur', 'Nagari', 'Pichatur'];
 const PROJECT_TYPES = ['On-Grid', 'Off-Grid', 'Hybrid'];
 
-const generateQuotationNumber = () => {
-    const now = new Date();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const year = String(now.getFullYear()).slice(-2);
-    const random = String(Math.floor(Math.random() * 9999) + 1).padStart(4, '0');
-    return `R2V${month}${year}-${random}`;
-};
+
 
 function Field({ label, required, error, children }) {
     return (
@@ -66,8 +60,8 @@ function SuccessScreen({ customerName, quotationNumber, onAnother }) {
 export default function AgentForm({ user, onLogout }) {
     const empty = {
         customer_name: '', phone: '', email: '', location: '',
-        branch: '', capacity: '', project_type: 'On-Grid',
-        site_remarks: '', specific_requirements: '',
+        company_branch: '', capacity_kwp: '', project_type: 'On-Grid',
+        poc: '', quoted_amount: '',
     };
 
     const [form, setForm] = useState(empty);
@@ -85,8 +79,8 @@ export default function AgentForm({ user, onLogout }) {
         if (!form.customer_name.trim()) e.customer_name = 'Name is required';
         if (!form.phone.trim()) e.phone = 'Phone is required';
         if (!form.location.trim()) e.location = 'Location is required';
-        if (!form.branch) e.branch = 'Branch is required';
-        if (!form.capacity) e.capacity = 'Capacity is required';
+        if (!form.company_branch) e.company_branch = 'Branch is required';
+        if (!form.capacity_kwp) e.capacity_kwp = 'Capacity is required';
         return e;
     };
 
@@ -95,7 +89,6 @@ export default function AgentForm({ user, onLogout }) {
         if (Object.keys(e).length > 0) { setErrors(e); return; }
 
         setSaving(true);
-        const quotationNumber = generateQuotationNumber();
 
         try {
             const { error } = await supabase.from('admin').insert({
@@ -103,14 +96,16 @@ export default function AgentForm({ user, onLogout }) {
                 phone: form.phone.trim(),
                 email: form.email.trim() || null,
                 location: form.location.trim(),
-                branch: form.branch,
-                capacity: form.capacity,
+                company_branch: form.company_branch,
+                capacity_kwp: form.capacity_kwp ? Number(form.capacity_kwp) : null,
                 project_type: form.project_type,
-                site_remarks: form.site_remarks.trim() || null,
-                specific_requirements: form.specific_requirements.trim() || null,
-                poc_name: user.name,
-                quotation_number: quotationNumber,
-                stage: ['leads'],
+                poc: form.poc || user.name,
+                quoted_amount: form.quoted_amount ? Number(form.quoted_amount) : null,
+                application_done_by: user.name,
+                stage: 'Leads',
+                payments: [],
+                follow_ups: [],
+                project_checklist: [],
             });
 
             if (error) throw error;
@@ -119,10 +114,10 @@ export default function AgentForm({ user, onLogout }) {
                 user_id: user.id,
                 action: 'create',
                 message: `Added new lead ${form.customer_name.trim()}`,
-                new_value: `${form.capacity} kWp ${form.project_type} • ${form.branch}`,
+                new_value: `${form.capacity_kwp} kWp ${form.project_type} • ${form.company_branch}`,
             });
 
-            setSubmitted({ customerName: form.customer_name.trim(), quotationNumber });
+            setSubmitted({ customerName: form.customer_name.trim(), quotationNumber: '' });
             setForm(empty);
             setErrors({});
         } catch (err) {
@@ -152,13 +147,7 @@ export default function AgentForm({ user, onLogout }) {
 
                 {/* Header */}
                 <div className="px-4 pt-10 pb-3 flex items-center justify-between flex-shrink-0">
-                    <div className="flex items-center gap-2">
-                        <img
-                            src="/Logo%20Ray2Volt%20Solar%20bgless.png"
-                            alt="Ray2Volt Solar"
-                            className="h-6 w-auto max-w-[80px] object-contain"
-                        />
-                    </div>
+                    <h1 className="text-white font-bold text-lg">New Lead</h1>
                     <div className="flex items-center gap-3">
                         <div className="text-right">
                             <p className="text-white text-xs font-semibold">{user.name}</p>
@@ -210,22 +199,32 @@ export default function AgentForm({ user, onLogout }) {
                         </div>
                     </Field>
 
-                    <Field label="Branch" required error={errors.branch}>
+                    <Field label="Branch" required error={errors.company_branch}>
                         <div className="relative">
                             <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600 pointer-events-none" />
-                            <select value={form.branch} onChange={e => set('branch', e.target.value)}
-                                className={`${inputClass('branch')} pl-10 appearance-none ${!form.branch && 'text-gray-600'}`}>
+                            <select value={form.company_branch} onChange={e => set('company_branch', e.target.value)}
+                                className={`${inputClass('company_branch')} pl-10 appearance-none ${!form.company_branch && 'text-gray-600'}`}>
                                 <option value="">Select branch...</option>
                                 {BRANCHES.map(b => <option key={b} value={b}>{b}</option>)}
                             </select>
                         </div>
                     </Field>
 
+                    <Field label="POC (Point of Contact)">
+                        <input type="text" value={form.poc} onChange={e => set('poc', e.target.value)}
+                            placeholder="Contact person name" className={inputClass('poc')} />
+                    </Field>
+
                     <SectionHeader icon={<Zap className="w-3.5 h-3.5 text-amber-400" />} label="Project Details" />
 
-                    <Field label="Capacity (kWp)" required error={errors.capacity}>
-                        <input type="number" value={form.capacity} onChange={e => set('capacity', e.target.value)}
-                            placeholder="e.g. 5" min="0" step="0.5" className={inputClass('capacity')} />
+                    <Field label="Capacity (kWp)" required error={errors.capacity_kwp}>
+                        <input type="number" value={form.capacity_kwp} onChange={e => set('capacity_kwp', e.target.value)}
+                            placeholder="e.g. 5" min="0" step="0.5" className={inputClass('capacity_kwp')} />
+                    </Field>
+
+                    <Field label="Quoted Amount (₹)">
+                        <input type="number" value={form.quoted_amount} onChange={e => set('quoted_amount', e.target.value)}
+                            placeholder="e.g. 500000" min="0" className={inputClass('quoted_amount')} />
                     </Field>
 
                     <Field label="System Type">
@@ -243,19 +242,7 @@ export default function AgentForm({ user, onLogout }) {
                         </div>
                     </Field>
 
-                    <SectionHeader icon={<span className="text-white text-[10px] font-bold">✎</span>} label="Site Notes" />
 
-                    <Field label="Site Remarks">
-                        <textarea value={form.site_remarks} onChange={e => set('site_remarks', e.target.value)}
-                            placeholder="Roof type, shading, access issues..." rows={3}
-                            className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white/30 transition-all resize-none" />
-                    </Field>
-
-                    <Field label="Customer Requirements">
-                        <textarea value={form.specific_requirements} onChange={e => set('specific_requirements', e.target.value)}
-                            placeholder="Special requests, backup power needed..." rows={3}
-                            className="w-full px-4 py-3 bg-gray-900 border border-gray-800 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-white/30 transition-all resize-none" />
-                    </Field>
 
                     {errors.submit && (
                         <div className="mb-2 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-2 text-red-400 text-sm">
