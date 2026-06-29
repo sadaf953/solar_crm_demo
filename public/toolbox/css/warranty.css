@@ -39,7 +39,7 @@
 .warranty-form-card {
     background: var(--bg-card);
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 1.5rem;
 }
 
@@ -85,7 +85,7 @@
     font-size: 0.95rem;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-primary);
     transition: all 0.1s ease;
@@ -119,7 +119,7 @@ textarea.warranty-input-field {
     font-weight: 600;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--primary);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--primary);
     color: #fff;
     cursor: pointer;
@@ -137,7 +137,7 @@ textarea.warranty-input-field {
     font-weight: 600;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-primary);
     cursor: pointer;
@@ -177,7 +177,7 @@ textarea.warranty-input-field {
     /* Increased top/bottom padding for "space" */
     background: #fff;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     font-size: 10pt;
     /* Slightly smaller base font */
     position: relative;
@@ -239,7 +239,7 @@ textarea.warranty-input-field {
     justify-content: space-between;
     background: #FEF3C7;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 8px 15px;
     /* Compact padding */
     margin-bottom: 15px;
@@ -336,7 +336,7 @@ textarea.warranty-input-field {
     /* Compact padding */
     background: #fff;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 .warranty-overview-item .overview-icon {
@@ -368,7 +368,7 @@ textarea.warranty-input-field {
     padding: 10px;
     background: #fafafa;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 .serial-number-item {
@@ -379,7 +379,7 @@ textarea.warranty-input-field {
     border: 1px solid #e0e0e0;
     padding: 4px 8px;
     text-align: center;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 /* --- Footer Area --- */
@@ -414,7 +414,7 @@ textarea.warranty-input-field {
 .warranty-highlight-box {
     background: #FEF3C7;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 15px;
     /* Compact padding */
     margin: 15px 0;
@@ -435,7 +435,7 @@ textarea.warranty-input-field {
 
 .warranty-terms-box {
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     margin-bottom: 15px;
 }
 
@@ -480,7 +480,7 @@ textarea.warranty-input-field {
     background: #fff;
     border: 1px solid #d0d0d0;
     border-left: 4px solid #1a1a1a;
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 12px;
     margin-bottom: 15px;
 }
@@ -494,7 +494,7 @@ textarea.warranty-input-field {
 
 .warranty-contact-section {
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     margin-bottom: 15px;
 }
 
@@ -549,7 +549,7 @@ textarea.warranty-input-field {
     padding: 8px;
     background: #fafafa;
     border: 1px solid #e0e0e0;
-    border-radius: 2px;
+    border-radius: 12px;
     font-size: 8.5pt;
     color: #666;
     text-align: center;

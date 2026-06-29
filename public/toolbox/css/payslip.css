@@ -41,7 +41,7 @@
 .ps-form-card {
     background: var(--bg-card);
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 1.5rem;
 }
 
@@ -88,7 +88,7 @@
     font-size: 0.95rem;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-primary);
     transition: border-color 0.15s ease;
@@ -115,7 +115,7 @@
 .ps-items-card {
     background: var(--bg-card);
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
@@ -146,7 +146,7 @@
 .ps-item-row {
     background: var(--bg-body);
     border: 1px solid var(--border-light);
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 1rem;
     margin-bottom: 1rem;
 }
@@ -175,7 +175,7 @@
     width: 28px;
     height: 28px;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-muted);
     cursor: pointer;
@@ -221,7 +221,7 @@
     font-weight: 500;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px dashed var(--primary);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--primary-light);
     color: var(--primary);
     cursor: pointer;
@@ -251,7 +251,7 @@
     font-weight: 600;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--primary);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--primary);
     color: #fff;
     cursor: pointer;
@@ -269,7 +269,7 @@
     font-weight: 600;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-primary);
     cursor: pointer;
@@ -292,7 +292,7 @@
     padding: 10mm;
     background: #fff;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     font-family: 'Google Sans Flex', 'DM Sans', sans-serif;
     font-size: 10pt;
     color: #1a1a1a;
@@ -508,7 +508,7 @@
     right: 10mm;
     height: 2px;
     background: #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 /* System Generated Notice */
@@ -521,7 +521,7 @@
     padding: 8px;
     background: #fafafa;
     border: 1px solid #e0e0e0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 /* ============================================

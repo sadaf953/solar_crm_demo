@@ -38,7 +38,7 @@
 .rcpt-form-card {
     background: var(--bg-card);
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 1.5rem;
 }
 
@@ -84,7 +84,7 @@
     font-size: 0.95rem;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-primary);
     transition: all 0.1s ease;
@@ -114,7 +114,7 @@ textarea.rcpt-input-field {
 .rcpt-items-card {
     background: var(--bg-card);
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
@@ -145,7 +145,7 @@ textarea.rcpt-input-field {
 .rcpt-item-row {
     background: var(--bg-body);
     border: 1px solid var(--border-light);
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 1rem;
     margin-bottom: 1rem;
 }
@@ -174,7 +174,7 @@ textarea.rcpt-input-field {
     width: 28px;
     height: 28px;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-muted);
     cursor: pointer;
@@ -220,7 +220,7 @@ textarea.rcpt-input-field {
     font-weight: 500;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px dashed var(--primary);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--primary-light);
     color: var(--primary);
     cursor: pointer;
@@ -248,7 +248,7 @@ textarea.rcpt-input-field {
     font-weight: 600;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--primary);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--primary);
     color: #fff;
     cursor: pointer;
@@ -266,7 +266,7 @@ textarea.rcpt-input-field {
     font-weight: 600;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-primary);
     cursor: pointer;
@@ -293,7 +293,7 @@ textarea.rcpt-input-field {
     padding: 10mm;
     background: #fff;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     font-family: 'Google Sans Flex', 'DM Sans', sans-serif;
     font-size: 10pt;
     color: #1a1a1a;
@@ -354,7 +354,7 @@ textarea.rcpt-input-field {
     margin: 0 0 14px 0;
     table-layout: fixed;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 .receipt-unified-table .info-header-row td,
@@ -447,7 +447,7 @@ textarea.rcpt-input-field {
     background: #fafafa;
     border: 1px solid #d0d0d0;
     border-left: 3px solid #a8d4e6;
-    border-radius: 2px;
+    border-radius: 12px;
     color: #1a1a1a;
 }
 
@@ -462,7 +462,7 @@ textarea.rcpt-input-field {
     border-collapse: collapse;
     margin: 14px 0;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 .payments-table td {
@@ -500,7 +500,7 @@ textarea.rcpt-input-field {
 /* ---- Bank Details Box ---- */
 .bank-details-section {
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     margin: 18px 0;
 }
 
@@ -542,7 +542,7 @@ textarea.rcpt-input-field {
     right: 10mm;
     height: 2px;
     background: #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 /* System Generated Notice */
@@ -555,7 +555,7 @@ textarea.rcpt-input-field {
     padding: 8px;
     background: #fafafa;
     border: 1px solid #e0e0e0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 /* ============================================

@@ -39,7 +39,7 @@
 .rfq-form-card {
     background: var(--bg-card);
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     padding: 1.5rem;
 }
 
@@ -85,7 +85,7 @@
     font-size: 0.95rem;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-primary);
     transition: all 0.1s ease;
@@ -137,7 +137,7 @@ textarea.rfq-input-field {
     font-weight: 600;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--primary);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--primary);
     color: #fff;
     cursor: pointer;
@@ -155,7 +155,7 @@ textarea.rfq-input-field {
     font-weight: 600;
     font-family: 'Google Sans Flex', 'Google Sans', sans-serif;
     border: 1px solid var(--border-medium);
-    border-radius: 2px;
+    border-radius: 12px;
     background: var(--bg-card);
     color: var(--text-primary);
     cursor: pointer;
@@ -181,7 +181,7 @@ textarea.rfq-input-field {
     padding: 10mm;
     background: #fff;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     font-family: 'Google Sans Flex', 'DM Sans', sans-serif;
     font-size: 10pt;
     color: #1a1a1a;
@@ -244,7 +244,7 @@ textarea.rfq-input-field {
     margin: 0 0 14px 0;
     table-layout: fixed;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
 }
 
 .invoice-unified-table .info-header-row td {
@@ -291,7 +291,7 @@ textarea.rfq-input-field {
     margin: 20px 0;
     padding: 15px;
     border: 1px solid #d0d0d0;
-    border-radius: 2px;
+    border-radius: 12px;
     background: #fff;
     font-size: 10pt;
     line-height: 1.6;
