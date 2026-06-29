@@ -9,7 +9,7 @@ import {
     Building2, Activity, FolderOpen, CheckSquare, AlertTriangle, Download,
     UserCog, Sun, TrendingUp, Wallet, ChevronRight, History,
     ShieldCheck, Eye, EyeOff, RefreshCw, ShoppingCart, Hash, Calendar,
-    Tag, DollarSign
+    Tag, DollarSign, Calculator, Award, Percent, FileSpreadsheet, ShoppingBag
 } from 'lucide-react';
 
 // ─── STAGE DEFINITIONS ─────────────────────────────────────────────────────────
@@ -82,6 +82,21 @@ const DEFAULT_PROJECT_CHECKLIST = [
     { id: 'subsidy_disbursed', label: 'Subsidy Disbursed', section: 'Post Net-Meter Application', checked: false },
     { id: 'all_payments_cleared', label: 'All payments cleared', section: 'Post Net-Meter Application', checked: false },
     { id: 'warranty_service_card', label: 'Warranty and service card', section: 'Post Net-Meter Application', checked: false },
+];
+
+// ─── TOOLBOX DEFINITIONS ───────────────────────────────────────────────────────
+const TOOLBOX_TOOLS = [
+    { id: 'toolbox-quote', label: 'Quote Generator', path: '/toolbox/tools/quote-generator.html', icon: FileText },
+    { id: 'toolbox-warranty', label: 'Warranty Card', path: '/toolbox/tools/warranty-card.html', icon: Award },
+    { id: 'toolbox-invoice', label: 'Invoice Generator', path: '/toolbox/tools/invoice-generator.html', icon: Banknote },
+    { id: 'toolbox-proforma', label: 'Proforma Invoice', path: '/toolbox/tools/proforma-invoice.html', icon: FileSpreadsheet },
+    { id: 'toolbox-rfq', label: 'Request for Quote', path: '/toolbox/tools/request-for-quotation.html', icon: Send },
+    { id: 'toolbox-po', label: 'Purchase Order', path: '/toolbox/tools/purchase-order.html', icon: ShoppingBag },
+    { id: 'toolbox-receipt', label: 'Receipt Generator', path: '/toolbox/tools/receipt-generator.html', icon: CreditCard },
+    { id: 'toolbox-emi', label: 'EMI Calculator', path: '/toolbox/tools/emi-calculator.html', icon: Calculator },
+    { id: 'toolbox-gst', label: 'GST Calculator', path: '/toolbox/tools/gst-calculator.html', icon: Percent },
+    { id: 'toolbox-payslip', label: 'Payslip Generator', path: '/toolbox/tools/payslip-generator.html', icon: Wallet },
+    { id: 'toolbox-packages', label: 'Package Prices', path: '/toolbox/tools/package-prices.html', icon: Package }
 ];
 
 function normalizeChecklist(rawChecklist) {
@@ -1920,6 +1935,12 @@ function Dashboard({ user, onLogout }) {
                         <NavBtn key={s.id} view="stages" stage={s.id} icon={s.icon} label={s.label} count={stageCounts[s.id] || 0} />
                     ))}
 
+                    {/* ── SolarFlow Toolbox ── */}
+                    <div className="text-[9px] uppercase font-bold text-stone-300 px-3 pt-5 pb-2 tracking-widest">SolarFlow Toolbox</div>
+                    {TOOLBOX_TOOLS.map(t => (
+                        <NavBtn key={t.id} view={t.id} icon={t.icon} label={t.label} count={0} />
+                    ))}
+
                     {/* ── System ── */}
                     <div className="text-[9px] uppercase font-bold text-stone-300 px-3 pt-5 pb-2 tracking-widest">System</div>
                     <NavBtn view="activity" icon={Activity} label="Activity Log" count={0} />
@@ -1954,7 +1975,8 @@ function Dashboard({ user, onLogout }) {
                                 : currentView === 'financial' ? 'Financial Tags'
                                     : currentView === 'activity' ? 'Activity Log'
                                         : currentView === 'users' ? 'User Management'
-                                            : PRIMARY_STAGES.find(s => s.id === selectedStage)?.label || selectedStage}
+                                            : currentView.startsWith('toolbox-') ? TOOLBOX_TOOLS.find(t => t.id === currentView)?.label
+                                                : PRIMARY_STAGES.find(s => s.id === selectedStage)?.label || selectedStage}
                         </h2>
                         {currentView === 'financial' && financialTagCount > 0 && (
                             <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">
@@ -1989,6 +2011,15 @@ function Dashboard({ user, onLogout }) {
 
                 <div className="flex-1 p-4 lg:p-6">
                     {currentView === 'dashboard' && <DashboardView customers={customers} loading={loading} />}
+                    {currentView.startsWith('toolbox-') && (
+                        <div className="w-full h-[calc(100vh-7.5rem)] bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+                            <iframe
+                                src={TOOLBOX_TOOLS.find(t => t.id === currentView)?.path}
+                                className="w-full h-full border-none"
+                                title="Toolbox View"
+                            />
+                        </div>
+                    )}
                     {currentView === 'financial' && (
                         <FinancialSidebarView
                             customers={customers}

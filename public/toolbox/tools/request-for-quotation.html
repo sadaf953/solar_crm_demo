@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request for Quotation - SolarFlow Toolbox</title>
+    <meta name="description" content="Generate professional Request for Quotations from Markdown.">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F59E0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Cpath d='M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41'/%3E%3C/svg%3E">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=DM+Sans:wght@400;600;700&family=Google+Sans+Flex:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Marked JS for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/request-for-quotation.css">
+    <link rel="stylesheet" href="../css/tool-responsive.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Mobile Header -->
+        <header class="mobile-header">
+            <svg class="mobile-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); width: 36px; height: 36px;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Open navigation menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-mobile-header">
+                <svg class="sidebar-mobile-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); width: 30px; height: 30px;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div>
+                <div class="logo-header">
+                    <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary); width: 32px; height: 32px;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                    <h2>Toolbox</h2>
+                </div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="../index.html" class="nav-link">Dashboard</a></li>
+                        <li><a href="emi-calculator.html" class="nav-link">EMI Calculator</a></li>
+                        <li><a href="gst-calculator.html" class="nav-link">GST Calculator</a></li>
+                        <li><a href="package-prices.html" class="nav-link">Package Prices</a></li>
+                        <li><a href="receipt-generator.html" class="nav-link">Payment Receipt</a></li>
+                        <li><a href="invoice-generator.html" class="nav-link">Invoice Generator</a></li>
+                        <li><a href="proforma-invoice.html" class="nav-link">Proforma Invoice</a></li>
+                        <li><a href="purchase-order.html" class="nav-link">Purchase Order</a></li>
+                        <li><a href="payslip-generator.html" class="nav-link">PaySlip Generator</a></li>
+                        <li><a href="warranty-card.html" class="nav-link">Warranty Card</a></li>
+                        <li><a href="quote-generator.html" class="nav-link">Quote Generator</a></li>
+                        <li><a href="request-for-quotation.html" class="nav-link active">Request For Quotation</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <section id="rfq-section" class="content-section active">
+
+                <div class="no-print-area">
+                    <!-- Page Header -->
+                    <div class="rfq-page-header">
+                        <h1>Request for Quotation Generator</h1>
+                        <p>Generate professional Request for Quotations from Markdown text.</p>
+                    </div>
+
+                    <!-- Form Grid -->
+                    <div class="rfq-form-grid">
+                        <!-- Vendor Details Card -->
+                        <div class="rfq-form-card">
+                            <h3 class="rfq-section-title">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Vendor Details
+                            </h3>
+                            <div class="rfq-input-group">
+                                <label for="rfqVendorName">Vendor Name</label>
+                                <input type="text" id="rfqVendorName" class="rfq-input-field" placeholder="Enter vendor name">
+                            </div>
+                            <div class="rfq-input-group">
+                                <label for="rfqVendorAddress">Address (Optional)</label>
+                                <textarea id="rfqVendorAddress" class="rfq-input-field" rows="2"
+                                    placeholder="Enter vendor address"></textarea>
+                            </div>
+                            <div class="rfq-input-group">
+                                <label for="rfqVendorPhone">Phone Number (Optional)</label>
+                                <input type="text" id="rfqVendorPhone" class="rfq-input-field" placeholder="Enter phone number">
+                            </div>
+                            <div class="rfq-input-group">
+                                <label for="rfqVendorEmail">Email (Optional)</label>
+                                <input type="email" id="rfqVendorEmail" class="rfq-input-field"
+                                    placeholder="Enter email address">
+                            </div>
+                            <div class="rfq-input-group">
+                                <label for="rfqVendorGstin">Vendor GSTIN (Optional)</label>
+                                <input type="text" id="rfqVendorGstin" class="rfq-input-field" placeholder="Enter vendor GSTIN">
+                            </div>
+                        </div>
+
+                        <!-- RFQ Settings Card -->
+                        <div class="rfq-form-card">
+                            <h3 class="rfq-section-title">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                                RFQ Settings
+                            </h3>
+                            <div class="rfq-input-group">
+                                <label for="rfqHeading">Document Heading</label>
+                                <input type="text" id="rfqHeading" class="rfq-input-field" value="REQUEST FOR QUOTATION" placeholder="e.g. REQUEST FOR QUOTATION">
+                            </div>
+                            <div class="rfq-input-group">
+                                <label for="rfqDate">RFQ Date</label>
+                                <input type="date" id="rfqDate" class="rfq-input-field">
+                            </div>
+                            <div class="rfq-input-group">
+                                <label for="rfqNumber">RFQ Number</label>
+                                <input type="text" id="rfqNumber" class="rfq-input-field"
+                                    placeholder="e.g. SFRFQ0125-0001">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Markdown Text Area Card -->
+                    <div class="rfq-form-card rfq-tc-card">
+                        <h3 class="rfq-section-title">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            Request Body (Markdown)
+                        </h3>
+                        <div class="rfq-input-group">
+                            <label for="rfqBody">Enter request content in Markdown format</label>
+                            <textarea id="rfqBody" class="rfq-input-field rfq-markdown-editor" rows="15"
+                                placeholder="### Scope of Supply&#10;Please provide a quotation for the following items:&#10;&#10;1. **Solar Panels:** 10 x 550Wp Monocrystalline&#10;2. **Inverter:** 1 x 5kW Hybrid Inverter&#10;&#10;*Note: Ensure delivery within 10 working days.*"></textarea>
+                            <span class="rfq-input-hint">Use standard Markdown syntax (# for headers, * for lists, ** for bold, etc.). We use marked.js to compile it.</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="rfq-actions">
+                        <button id="rfqGenerateBtn" class="rfq-btn-primary">Generate RFQ Preview</button>
+                        <button id="rfqPrintBtn" class="rfq-btn-secondary">Print / Save as PDF</button>
+                    </div>
+                </div>
+
+                <!-- Request for Quotation Template -->
+                <div id="rfqPreview">
+                    <!-- Header -->
+                    <div class="invoice-header">
+                        <div class="invoice-title-section">
+                            <h1 id="rfqDispHeading">REQUEST FOR QUOTATION</h1>
+                            <p id="rfqDispNumber">SFRFQ...</p>
+                        </div>
+                        <div class="invoice-logo-section">
+                            <svg class="invoice-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Unified Company/Vendor Info -->
+                    <table class="invoice-unified-table">
+                        <colgroup>
+                            <col style="width: 50%;">
+                            <col style="width: 50%;">
+                        </colgroup>
+                        <!-- Info Section Header Row -->
+                        <tr class="info-header-row">
+                            <td class="info-header-cell">From:</td>
+                            <td class="info-header-cell">Vendor:</td>
+                        </tr>
+                        <!-- Info Section Content Row -->
+                        <tr class="info-content-row">
+                            <td class="from-cell">
+                                <h3 class="company-name-bold">SolarFlow Private Limited</h3>
+                                <p>123, Green Energy Boulevard, Sector 63, Noida, Uttar Pradesh, 201301</p>
+                                <p><span class="invoice-info-label">Phone:</span> +91 98765 43210</p>
+                                <p><span class="invoice-info-label">Email:</span> SolarFlowsolar@gmail.com</p>
+                                <br>
+                                <p><span class="invoice-info-label">GSTIN:</span> 09AAAAA0000A1Z0</p>
+                                <p><span class="invoice-info-label">CIN:</span> U35104UP2026PTC999999</p>
+                            </td>
+                            <td class="to-cell">
+                                <p><span class="invoice-info-label">Name:</span> <span id="rfqDispVendorName"></span></p>
+                                <p><span class="invoice-info-label">Address:</span> <span id="rfqDispVendorAddress"></span></p>
+                                <p><span class="invoice-info-label">Phone Number:</span> <span id="rfqDispVendorPhone"></span></p>
+                                <p><span class="invoice-info-label">Email:</span> <span id="rfqDispVendorEmail"></span></p>
+                                <br>
+                                <p><span class="invoice-info-label">GSTIN:</span> <span id="rfqDispVendorGstin"></span></p>
+                                <p><span class="invoice-info-label">Date:</span> <span id="rfqDispDate"></span></p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Markdown Body -->
+                    <div class="rfq-body-content" id="rfqDispBody">
+                        <!-- Markdown text will be injected here as HTML -->
+                    </div>
+
+                    <!-- Screen footer; repeated on every printed page -->
+                    <footer class="rfq-document-footer">
+                        <div class="rfq-footer-rule"></div>
+                        <div class="rfq-footer-content">
+                            <span class="rfq-footer-company">SolarFlow Private Limited</span>
+                            <span class="rfq-footer-notice">System-generated document; no physical signature required.</span>
+                            <span class="rfq-footer-reference">RFQ <span id="rfqFooterNumber">SFRFQ...</span></span>
+                        </div>
+                    </footer>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Overlay for Mobile Sidebar -->
+    <div class="overlay" id="overlay"></div>
+
+    
+    <script src="../js/navigation.js"></script>
+    <script src="../js/request-for-quotation.js"></script>
+</body>
+
+</html>
