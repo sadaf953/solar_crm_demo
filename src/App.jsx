@@ -1935,14 +1935,9 @@ function Dashboard({ user, onLogout }) {
                         <NavBtn key={s.id} view="stages" stage={s.id} icon={s.icon} label={s.label} count={stageCounts[s.id] || 0} />
                     ))}
 
-                    {/* ── SolarFlow Toolbox ── */}
-                    <div className="text-[9px] uppercase font-bold text-stone-300 px-3 pt-5 pb-2 tracking-widest">SolarFlow Toolbox</div>
-                    {TOOLBOX_TOOLS.map(t => (
-                        <NavBtn key={t.id} view={t.id} icon={t.icon} label={t.label} count={0} />
-                    ))}
-
                     {/* ── System ── */}
                     <div className="text-[9px] uppercase font-bold text-stone-300 px-3 pt-5 pb-2 tracking-widest">System</div>
+                    <NavBtn view="toolbox" icon={Wrench} label="Toolbox" count={0} />
                     <NavBtn view="activity" icon={Activity} label="Activity Log" count={0} />
                     {user.userType === 'admin' && (
                         <NavBtn view="users" icon={UserCog} label="User Management" count={0} />
@@ -1975,7 +1970,7 @@ function Dashboard({ user, onLogout }) {
                                 : currentView === 'financial' ? 'Financial Tags'
                                     : currentView === 'activity' ? 'Activity Log'
                                         : currentView === 'users' ? 'User Management'
-                                            : currentView.startsWith('toolbox-') ? TOOLBOX_TOOLS.find(t => t.id === currentView)?.label
+                                            : currentView === 'toolbox' ? 'SolarFlow Toolbox'
                                                 : PRIMARY_STAGES.find(s => s.id === selectedStage)?.label || selectedStage}
                         </h2>
                         {currentView === 'financial' && financialTagCount > 0 && (
@@ -2011,10 +2006,10 @@ function Dashboard({ user, onLogout }) {
 
                 <div className="flex-1 p-4 lg:p-6">
                     {currentView === 'dashboard' && <DashboardView customers={customers} loading={loading} />}
-                    {currentView.startsWith('toolbox-') && (
-                        <div className="w-full h-[calc(100vh-7.5rem)] bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+                    {currentView === 'toolbox' && (
+                        <div className="w-full h-[calc(100vh-5.5rem)] lg:h-[calc(100vh-7.5rem)] bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
                             <iframe
-                                src={TOOLBOX_TOOLS.find(t => t.id === currentView)?.path}
+                                src="/toolbox/index.html"
                                 className="w-full h-full border-none"
                                 title="Toolbox View"
                             />

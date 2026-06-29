@@ -239,6 +239,14 @@
                         </div>
                     </div>
 
+                    <!-- Schematic Diagram -->
+                    <div class="pkg-card" style="margin-top: 20px; padding: 15px; text-align: center;">
+                        <h3 class="pkg-card-title" id="pkgSchematicTitle">On-Grid System Schematic</h3>
+                        <div style="margin-top: 10px; display: flex; justify-content: center;">
+                            <img id="pkgSchematicImage" src="../assets/On-Grid Schematic Diagram.png" alt="System Schematic" style="max-width: 100%; height: auto; border: 1px solid var(--border-medium); border-radius: 2px; max-height: 250px;">
+                        </div>
+                    </div>
+
                     <!-- Note -->
                     <div class="pkg-note">
                         <strong>Note:</strong> Above pricing covers Deye Low Voltage series only. Custom quotes for High Voltage (HV) inverters and battery storage systems are available upon request.
@@ -373,6 +381,19 @@
             btn.classList.add('active');
             moveHighlight(btn);
             updateView();
+            
+            // Update schematic diagram
+            const schematicImg = document.getElementById('pkgSchematicImage');
+            const schematicTitle = document.getElementById('pkgSchematicTitle');
+            if (schematicImg && schematicTitle) {
+                if (system === 'hybrid') {
+                    schematicImg.src = '../assets/Hybrid Solar Schemartic Diagram.png';
+                    schematicTitle.textContent = 'Hybrid System Schematic';
+                } else {
+                    schematicImg.src = '../assets/On-Grid Schematic Diagram.png';
+                    schematicTitle.textContent = 'On-Grid System Schematic';
+                }
+            }
         }
 
         if (btnOngrid && btnHybrid && packageSelect) {

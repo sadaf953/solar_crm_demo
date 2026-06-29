@@ -1052,3 +1052,24 @@ textarea.input-field {
         padding: 0;
     }
 }
+
+/* ==========================================================================
+   IFRAME MODE STYLES - Hides sidebar/header when integrated in Solar CRM
+   ========================================================================== */
+.in-iframe .sidebar,
+.in-iframe .mobile-header,
+.in-iframe .sidebar-mobile-header,
+.in-iframe .overlay {
+    display: none !important;
+}
+.in-iframe .main-content {
+    margin-left: 0 !important;
+    padding: 12px !important;
+    width: 100% !important;
+    max-width: none !important;
+}
+@media print {
+    .iframe-back-btn-container {
+        display: none !important;
+    }
+}

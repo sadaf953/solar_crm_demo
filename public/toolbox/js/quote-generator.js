@@ -312,6 +312,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         populateSavingsTable(annualUnits, tariffRate, escalation);
 
+        // Update dynamic schematic diagram on page 4 based on system type
+        const schematicImg = document.getElementById('qpSchematicImage');
+        if (schematicImg) {
+            if (installType.toLowerCase().includes('hybrid') || installType.toLowerCase().includes('off-grid')) {
+                schematicImg.src = '../assets/Hybrid Solar Schemartic Diagram.png';
+            } else {
+                schematicImg.src = '../assets/On-Grid Schematic Diagram.png';
+            }
+        }
+
         // --- Environmental Impact (25 years) ---
         const totalUnits25yr = annualUnits * 25;
         const co2Saved = (totalUnits25yr * 0.82) / 1000; // 0.82 kg CO2 per kWh, converted to tonnes
