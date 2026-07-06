@@ -358,9 +358,9 @@ export default function SalesView({ customers, loading, onUpdate, user }) {
     const filtered = customers.filter(c => {
         const q = searchQuery.toLowerCase();
         const matchesSearch = !q ||
-            c.customer_name?.toLowerCase().includes(q) ||
-            c.phone?.includes(q) ||
-            c.location?.toLowerCase().includes(q);
+            (c.customer_name && String(c.customer_name).toLowerCase().includes(q)) ||
+            (c.phone && String(c.phone).includes(q)) ||
+            (c.location && String(c.location).toLowerCase().includes(q));
         const matchesStage = !stageFilter || c.stage === stageFilter;
         return matchesSearch && matchesStage;
     });

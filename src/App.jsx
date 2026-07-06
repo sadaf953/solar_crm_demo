@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from './supabase';
-import AgentForm from './components/agentform'; 
+import AgentForm from './components/agentform';
 import {
     Users, Clock, Package, Wrench, FileText, Send, Gauge,
     CheckCircle2, Plus, ChevronDown, X, MapPin, Zap, LogOut, Search,
@@ -11,6 +11,21 @@ import {
     ShieldCheck, Eye, EyeOff, RefreshCw, ShoppingCart, Hash, Calendar,
     Tag, DollarSign, Calculator, Award, Percent, FileSpreadsheet, ShoppingBag
 } from 'lucide-react';
+
+import ToolsDashboard from './components/tools/ToolsDashboard';
+import EMICalculator from './components/tools/EMICalculator';
+import GSTCalculator from './components/tools/GSTCalculator';
+import QuoteGenerator from './components/tools/QuoteGenerator';
+import WarrantyGenerator from './components/tools/WarrantyGenerator';
+import PackagePrices from './components/tools/PackagePrices';
+import InvoiceGenerator from './components/tools/InvoiceGenerator';
+import ReceiptGenerator from './components/tools/ReceiptGenerator';
+import ProformaInvoiceGenerator from './components/tools/ProformaInvoiceGenerator';
+import PurchaseOrder from './components/tools/PurchaseOrder';
+import PaySlipGenerator from './components/tools/PaySlipGenerator';
+import RFQGenerator from './components/tools/RFQGenerator';
+import { Routes, Route } from 'react-router-dom';
+
 
 // ─── STAGE DEFINITIONS ─────────────────────────────────────────────────────────
 // Stage IDs now match backend casing exactly
@@ -51,12 +66,12 @@ const STAGE_THEMES = {
 };
 
 const FINANCIAL_TAG_COLORS = {
-    'Subsidy Redeems Pending':     { bg: 'bg-rose-50',   text: 'text-rose-700',   border: 'border-rose-200',   dot: 'bg-rose-400' },
-    'Subsidy Disbursement Pending':{ bg: 'bg-lime-50',   text: 'text-lime-700',   border: 'border-lime-200',   dot: 'bg-lime-400' },
-    '2nd Payment':                 { bg: 'bg-blue-50',   text: 'text-blue-700',   border: 'border-blue-200',   dot: 'bg-blue-400' },
-    '3rd Payment':                 { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-400' },
-    'Pending Cheque':              { bg: 'bg-gray-50',   text: 'text-gray-700',   border: 'border-gray-200',   dot: 'bg-gray-400' },
-    'Received Cheque':             { bg: 'bg-emerald-50',text: 'text-emerald-700',border: 'border-emerald-200',dot: 'bg-emerald-400' },
+    'Subsidy Redeems Pending': { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200', dot: 'bg-rose-400' },
+    'Subsidy Disbursement Pending': { bg: 'bg-lime-50', text: 'text-lime-700', border: 'border-lime-200', dot: 'bg-lime-400' },
+    '2nd Payment': { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200', dot: 'bg-blue-400' },
+    '3rd Payment': { bg: 'bg-indigo-50', text: 'text-indigo-700', border: 'border-indigo-200', dot: 'bg-indigo-400' },
+    'Pending Cheque': { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200', dot: 'bg-gray-400' },
+    'Received Cheque': { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200', dot: 'bg-emerald-400' },
 };
 
 const DEFAULT_PROJECT_CHECKLIST = [
@@ -86,18 +101,20 @@ const DEFAULT_PROJECT_CHECKLIST = [
 
 // ─── TOOLBOX DEFINITIONS ───────────────────────────────────────────────────────
 const TOOLBOX_TOOLS = [
-    { id: 'toolbox-quote', label: 'Quote Generator', path: '/toolbox/tools/quote-generator.html', icon: FileText },
-    { id: 'toolbox-warranty', label: 'Warranty Card', path: '/toolbox/tools/warranty-card.html', icon: Award },
-    { id: 'toolbox-invoice', label: 'Invoice Generator', path: '/toolbox/tools/invoice-generator.html', icon: Banknote },
-    { id: 'toolbox-proforma', label: 'Proforma Invoice', path: '/toolbox/tools/proforma-invoice.html', icon: FileSpreadsheet },
-    { id: 'toolbox-rfq', label: 'Request for Quote', path: '/toolbox/tools/request-for-quotation.html', icon: Send },
-    { id: 'toolbox-po', label: 'Purchase Order', path: '/toolbox/tools/purchase-order.html', icon: ShoppingBag },
-    { id: 'toolbox-receipt', label: 'Receipt Generator', path: '/toolbox/tools/receipt-generator.html', icon: CreditCard },
-    { id: 'toolbox-emi', label: 'EMI Calculator', path: '/toolbox/tools/emi-calculator.html', icon: Calculator },
-    { id: 'toolbox-gst', label: 'GST Calculator', path: '/toolbox/tools/gst-calculator.html', icon: Percent },
-    { id: 'toolbox-payslip', label: 'Payslip Generator', path: '/toolbox/tools/payslip-generator.html', icon: Wallet },
-    { id: 'toolbox-packages', label: 'Package Prices', path: '/toolbox/tools/package-prices.html', icon: Package }
+    { id: 'tools-quote', label: 'Quote Generator', path: '/tools/quote', icon: FileText },
+    { id: 'tools-warranty', label: 'Warranty Card', path: '/tools/warranty', icon: Award },
+    { id: 'tools-invoice', label: 'Invoice Generator', path: '/tools/invoice', icon: Banknote },
+    { id: 'tools-proforma', label: 'Proforma Invoice', path: '/tools/proforma', icon: FileSpreadsheet },
+    { id: 'tools-rfq', label: 'Request for Quote', path: '/tools/rfq', icon: Send },
+    { id: 'tools-po', label: 'Purchase Order', path: '/tools/po', icon: ShoppingBag },
+    { id: 'tools-receipt', label: 'Receipt Generator', path: '/tools/receipt', icon: CreditCard },
+    { id: 'tools-emi', label: 'EMI Calculator', path: '/tools/emi', icon: Calculator },
+    { id: 'tools-gst', label: 'GST Calculator', path: '/tools/gst', icon: Percent },
+    { id: 'tools-payslip', label: 'Payslip Generator', path: '/tools/payslip', icon: Wallet },
+    { id: 'tools-packages', label: 'Package Prices', path: '/tools/packages', icon: Package }
 ];
+
+
 
 function normalizeChecklist(rawChecklist) {
     let storedChecklist = [];
@@ -356,7 +373,8 @@ const MetricBox = ({ label, value, icon: Icon, color }) => {
 
 // ─── FINANCIAL SIDEBAR VIEW ─────────────────────────────────────────────────────
 // Shows all customers with a financial_tag, grouped by tag type
-function FinancialSidebarView({ customers, onSelectCustomer }) {
+// Supports filtering by a specific tag via selectedTag prop
+function FinancialSidebarView({ customers, onSelectCustomer, selectedTag, onSelectTag }) {
     const tagged = customers.filter(c => c.financial_tag);
 
     const grouped = FINANCIAL_TAGS.reduce((acc, tag) => {
@@ -366,6 +384,19 @@ function FinancialSidebarView({ customers, onSelectCustomer }) {
     }, {});
 
     const totalPending = tagged.reduce((s, c) => s + (Number(c.receivables) || 0), 0);
+
+    // Filter to selected tag or show all
+    const visibleTags = selectedTag
+        ? FINANCIAL_TAGS.filter(t => t.id === selectedTag)
+        : FINANCIAL_TAGS;
+
+    const visibleCount = selectedTag
+        ? (grouped[selectedTag] || []).length
+        : tagged.length;
+
+    const visibleReceivables = selectedTag
+        ? (grouped[selectedTag] || []).reduce((s, c) => s + (Number(c.receivables) || 0), 0)
+        : totalPending;
 
     if (tagged.length === 0) {
         return (
@@ -379,31 +410,67 @@ function FinancialSidebarView({ customers, onSelectCustomer }) {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            {/* Summary bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm col-span-2">
-                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Tagged Customers</p>
-                    <p className="text-2xl font-bold text-stone-800">{tagged.length}</p>
-                </div>
-                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm col-span-2">
-                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Receivables</p>
-                    <p className="text-2xl font-bold text-orange-600">₹{(totalPending / 100000).toFixed(2)}L</p>
-                </div>
+            {/* Filter tabs — click a tag to filter, click again to show all */}
+            <div className="flex flex-wrap gap-2">
+                <button
+                    onClick={() => onSelectTag(null)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${!selectedTag
+                        ? 'bg-stone-900 text-white border-stone-900'
+                        : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
+                        }`}>
+                    All Tags
+                    <span className={`ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full ${!selectedTag ? 'bg-white/20 text-white' : 'bg-stone-100 text-stone-500'
+                        }`}>{tagged.length}</span>
+                </button>
                 {FINANCIAL_TAGS.map(tag => {
                     const count = (grouped[tag.id] || []).length;
                     if (count === 0) return null;
                     const colors = FINANCIAL_TAG_COLORS[tag.id] || { bg: 'bg-stone-50', text: 'text-stone-700', border: 'border-stone-200', dot: 'bg-stone-400' };
+                    const isActive = selectedTag === tag.id;
                     return (
-                        <div key={tag.id} className={`rounded-2xl p-3 border ${colors.bg} ${colors.border}`}>
-                            <p className={`text-[9px] font-bold uppercase tracking-widest mb-0.5 ${colors.text}`}>{tag.label}</p>
-                            <p className={`text-xl font-bold ${colors.text}`}>{count}</p>
-                        </div>
+                        <button key={tag.id}
+                            onClick={() => onSelectTag(isActive ? null : tag.id)}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${isActive
+                                ? 'bg-stone-900 text-white border-stone-900'
+                                : `${colors.bg} ${colors.text} ${colors.border} hover:shadow-sm`
+                                }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isActive ? 'bg-white' : colors.dot}`} />
+                            {tag.label}
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : `${colors.bg} ${colors.text}`
+                                }`}>{count}</span>
+                        </button>
                     );
                 })}
             </div>
 
-            {/* Grouped lists */}
-            {FINANCIAL_TAGS.map(tag => {
+            {/* Summary bar */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm col-span-2">
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">
+                        {selectedTag ? FINANCIAL_TAGS.find(t => t.id === selectedTag)?.label : 'Tagged Customers'}
+                    </p>
+                    <p className="text-2xl font-bold text-stone-800">{visibleCount}</p>
+                </div>
+                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm col-span-2">
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Receivables</p>
+                    <p className="text-2xl font-bold text-orange-600">₹{(visibleReceivables / 100000).toFixed(2)}L</p>
+                </div>
+                {!selectedTag && FINANCIAL_TAGS.map(tag => {
+                    const count = (grouped[tag.id] || []).length;
+                    if (count === 0) return null;
+                    const colors = FINANCIAL_TAG_COLORS[tag.id] || { bg: 'bg-stone-50', text: 'text-stone-700', border: 'border-stone-200', dot: 'bg-stone-400' };
+                    return (
+                        <button key={tag.id} onClick={() => onSelectTag(tag.id)}
+                            className={`rounded-2xl p-3 border ${colors.bg} ${colors.border} text-left hover:shadow-md transition-all cursor-pointer`}>
+                            <p className={`text-[9px] font-bold uppercase tracking-widest mb-0.5 ${colors.text}`}>{tag.label}</p>
+                            <p className={`text-xl font-bold ${colors.text}`}>{count}</p>
+                        </button>
+                    );
+                })}
+            </div>
+
+            {/* Grouped lists — only show visible tags */}
+            {visibleTags.map(tag => {
                 const group = grouped[tag.id];
                 if (!group) return null;
                 const colors = FINANCIAL_TAG_COLORS[tag.id] || { bg: 'bg-stone-50', text: 'text-stone-700', border: 'border-stone-200', dot: 'bg-stone-400' };
@@ -630,11 +697,10 @@ function SubsidyHistoryEditor({ subsidyHistory = [], onChange, isEditing }) {
                 {subsidyHistory.map((e, i) => (
                     <div key={i} className="bg-stone-50 p-3 rounded-xl">
                         <div className="flex justify-between items-center mb-1">
-                            <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${
-                                e.type === 'Disbursed' ? 'bg-emerald-100 text-emerald-700' :
+                            <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold uppercase ${e.type === 'Disbursed' ? 'bg-emerald-100 text-emerald-700' :
                                 e.type === 'Redeemed' ? 'bg-blue-100 text-blue-700' :
-                                'bg-red-100 text-red-700'
-                            }`}>{e.type}</span>
+                                    'bg-red-100 text-red-700'
+                                }`}>{e.type}</span>
                             {e.date && <p className="text-xs text-stone-400">{e.date}</p>}
                         </div>
                         {e.remark && <p className="text-xs text-stone-600 mt-1">{e.remark}</p>}
@@ -916,23 +982,59 @@ function CustomerDetailModal({ customer, onClose, onUpdate, onDelete, user, meta
         setActivityLogs(prev => [newLog, ...prev]);
         logActivity(user.id, 'stage_change', `${customer.customer_name}: Moved to ${stageLabel}`);
     };
-
     const handleSave = async () => {
         setSaving(true);
+
+        const changes = [];
+        Object.keys(editData).forEach(key => {
+            // 1. Remove 'subsidy_history' and 'payments' from this skip list if you want to track them
+            const skip = ['id', 'created_at', 'crn', 'project_checklist', 'follow_ups'];
+            if (skip.includes(key)) return;
+
+            // 2. Special handling for Arrays (Subsidy History & Payments)
+            if (Array.isArray(editData[key])) {
+                const oldArr = JSON.stringify(customer[key] || []);
+                const newArr = JSON.stringify(editData[key] || []);
+
+                if (oldArr !== newArr) {
+                    const label = key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                    // For the log, we'll just note that the list was updated
+                    changes.push(`${label}: Records Updated`);
+                }
+                return; // Skip the standard string comparison below for arrays
+            }
+
+            // 3. Standard comparison for text/numbers
+            const oldVal = String(customer[key] || '').trim();
+            const newVal = String(editData[key] || '').trim();
+
+            if (oldVal !== newVal) {
+                const label = key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                changes.push(`${label}: ${oldVal || 'None'} → ${newVal || 'None'}`);
+            }
+        });
+
+        const detailMessage = changes.length > 0 ? changes.join(' | ') : "Modified internal technical data";
+
         const updates = { ...editData };
         delete updates.id;
         delete updates.created_at;
         delete updates.crn;
+
         await onUpdate(customer.id, updates);
+
         const newLog = {
             id: Date.now().toString(),
-            message: `Customer details updated`,
+            message: `Updated details for ${customer.customer_name}`,
+            new_value: detailMessage,
             created_at: new Date().toISOString(),
             profiles: { name: user.name },
             action: 'update',
         };
+
         setActivityLogs(prev => [newLog, ...prev]);
-        logActivity(user.id, 'update', `${customer.customer_name}: Details updated`);
+        logActivity(user.id, 'update', `${customer.customer_name}: Details updated`, detailMessage);
+
         setIsEditing(false);
         setSaving(false);
     };
@@ -1769,6 +1871,7 @@ function Dashboard({ user, onLogout }) {
     const [loading, setLoading] = useState(true);
     const [currentView, setCurrentView] = useState('dashboard');
     const [selectedStage, setSelectedStage] = useState('Leads');
+    const [selectedFinancialTag, setSelectedFinancialTag] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -1838,11 +1941,21 @@ function Dashboard({ user, onLogout }) {
     const filtered = customers.filter(c => {
         const searchLower = searchQuery.toLowerCase();
         const matchesSearch = !searchQuery ||
-            c.customer_name?.toLowerCase().includes(searchLower) ||
-            c.phone?.includes(searchQuery) ||
-            c.crn?.toLowerCase().includes(searchLower);
-        const matchesStage = c.stage === selectedStage;
+            (c.customer_name && String(c.customer_name).toLowerCase().includes(searchLower)) ||
+            (c.phone && String(c.phone).includes(searchQuery)) ||
+            (c.crn && String(c.crn).toLowerCase().includes(searchLower));
         const isAuthorized = user.userType === 'admin' || c.poc === user.name;
+
+        if (currentView === 'financial') {
+            // Financial tag filtering: specific tag or all tagged
+            const matchesTag = selectedFinancialTag
+                ? c.financial_tag === selectedFinancialTag
+                : !!c.financial_tag;
+            return matchesTag && matchesSearch && isAuthorized;
+        }
+
+        // Default: stage filtering
+        const matchesStage = c.stage === selectedStage;
         return matchesStage && matchesSearch && isAuthorized;
     });
 
@@ -1875,6 +1988,7 @@ function Dashboard({ user, onLogout }) {
             {sidebarOpen && <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
 
             <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-stone-100 flex flex-col transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                {/* Sidebar Header */}
                 <div className="p-5 border-b border-stone-100 flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600">
@@ -1888,62 +2002,29 @@ function Dashboard({ user, onLogout }) {
                     <button className="lg:hidden text-stone-400" onClick={() => setSidebarOpen(false)}><X className="w-5 h-5" /></button>
                 </div>
 
+                {/* Sidebar Nav Links */}
                 <div className="flex-1 overflow-y-auto p-3">
-                    {/* Main nav */}
                     <NavBtn view="dashboard" icon={LayoutDashboard} label="Dashboard" count={0} />
 
-                    {/* ── Financial Section ── completely separate from stages */}
                     <div className="mt-4 mb-1">
                         <div className="text-[9px] uppercase font-bold text-stone-300 px-3 pb-2 tracking-widest">Financial</div>
-                        <button
-                            onClick={() => { setCurrentView('financial'); setSidebarOpen(false); }}
-                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold mb-0.5 transition-colors ${currentView === 'financial' ? 'bg-stone-900 text-white' : 'text-stone-600 hover:bg-stone-100'}`}>
-                            <IndianRupee className="w-4 h-4 flex-shrink-0" />
-                            <span className="flex-1 text-left">Financial Tags</span>
-                            {financialTagCount > 0 && (
-                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full min-w-[20px] text-center ${currentView === 'financial' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-600'}`}>
-                                    {financialTagCount}
-                                </span>
-                            )}
-                        </button>
-                        {/* Mini tag breakdown — visible always in sidebar */}
-                        <div className="px-3 pb-2 space-y-1">
-                            {FINANCIAL_TAGS.map(tag => {
-                                const count = customers.filter(c => c.financial_tag === tag.id).length;
-                                if (count === 0) return null;
-                                const colors = FINANCIAL_TAG_COLORS[tag.id] || {};
-                                return (
-                                    <button key={tag.id}
-                                        onClick={() => { setCurrentView('financial'); setSidebarOpen(false); }}
-                                        className="w-full flex items-center justify-between px-2 py-1 rounded-lg hover:bg-stone-50 transition-colors">
-                                        <div className="flex items-center gap-1.5">
-                                            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${colors.dot || 'bg-stone-400'}`} />
-                                            <span className="text-[10px] text-stone-500 font-medium truncate">{tag.label}</span>
-                                        </div>
-                                        <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold border ${colors.bg || 'bg-stone-50'} ${colors.text || 'text-stone-500'} ${colors.border || 'border-stone-200'}`}>
-                                            {count}
-                                        </span>
-                                    </button>
-                                );
-                            })}
-                        </div>
+                        <NavBtn view="financial" icon={IndianRupee} label="Financial Tags" count={financialTagCount} />
                     </div>
 
-                    {/* ── Project Stages ── */}
                     <div className="text-[9px] uppercase font-bold text-stone-300 px-3 pt-4 pb-2 tracking-widest">Project Stages</div>
                     {PRIMARY_STAGES.map(s => (
                         <NavBtn key={s.id} view="stages" stage={s.id} icon={s.icon} label={s.label} count={stageCounts[s.id] || 0} />
                     ))}
 
-                    {/* ── System ── */}
                     <div className="text-[9px] uppercase font-bold text-stone-300 px-3 pt-5 pb-2 tracking-widest">System</div>
-                    <NavBtn view="toolbox" icon={Wrench} label="Toolbox" count={0} />
+                    <NavBtn view="tools" icon={Wrench} label="Tools" count={0} />
                     <NavBtn view="activity" icon={Activity} label="Activity Log" count={0} />
                     {user.userType === 'admin' && (
                         <NavBtn view="users" icon={UserCog} label="User Management" count={0} />
                     )}
                 </div>
 
+                {/* User Profile & Logout Section */}
                 <div className="p-3 border-t border-stone-100">
                     <div className="flex items-center gap-3 px-3 py-2 mb-1">
                         <div className="w-8 h-8 bg-stone-900 rounded-full flex items-center justify-center text-white text-xs font-bold">
@@ -1967,13 +2048,23 @@ function Dashboard({ user, onLogout }) {
                         <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-stone-500"><Menu className="w-6 h-6" /></button>
                         <h2 className="font-bold text-stone-800">
                             {currentView === 'dashboard' ? 'Business Dashboard'
-                                : currentView === 'financial' ? 'Financial Tags'
+                                : currentView === 'financial'
+                                    ? (selectedFinancialTag
+                                        ? FINANCIAL_TAGS.find(t => t.id === selectedFinancialTag)?.label || 'Financial Tags'
+                                        : 'Financial Tags')
                                     : currentView === 'activity' ? 'Activity Log'
                                         : currentView === 'users' ? 'User Management'
                                             : currentView === 'toolbox' ? 'SolarFlow Toolbox'
                                                 : PRIMARY_STAGES.find(s => s.id === selectedStage)?.label || selectedStage}
                         </h2>
-                        {currentView === 'financial' && financialTagCount > 0 && (
+                        {currentView === 'financial' && selectedFinancialTag && (
+                            <button
+                                onClick={() => setSelectedFinancialTag(null)}
+                                className="flex items-center gap-1 text-xs bg-stone-100 text-stone-600 px-2.5 py-1 rounded-full font-semibold hover:bg-stone-200 transition-colors">
+                                <X className="w-3 h-3" /> Clear filter
+                            </button>
+                        )}
+                        {currentView === 'financial' && !selectedFinancialTag && financialTagCount > 0 && (
                             <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">
                                 {financialTagCount} tagged
                             </span>
@@ -2006,20 +2097,196 @@ function Dashboard({ user, onLogout }) {
 
                 <div className="flex-1 p-4 lg:p-6">
                     {currentView === 'dashboard' && <DashboardView customers={customers} loading={loading} />}
-                    {currentView === 'toolbox' && (
-                        <div className="w-full h-[calc(100vh-5.5rem)] lg:h-[calc(100vh-7.5rem)] bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-                            <iframe
-                                src="/toolbox/index.html"
-                                className="w-full h-full border-none"
-                                title="Toolbox View"
-                            />
-                        </div>
-                    )}
+                    {currentView === 'tools' && <ToolsDashboard />}
                     {currentView === 'financial' && (
-                        <FinancialSidebarView
-                            customers={customers}
-                            onSelectCustomer={setSelectedCustomer}
-                        />
+                        loading ? (
+                            <div className="flex items-center justify-center h-64">
+                                <div className="w-8 h-8 border-4 border-stone-900 border-t-transparent rounded-full animate-spin" />
+                            </div>
+                        ) : (
+                            <div className="space-y-5">
+                                {/* Filter chips */}
+                                <div className="flex flex-wrap gap-2">
+                                    <button
+                                        onClick={() => setSelectedFinancialTag(null)}
+                                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${!selectedFinancialTag
+                                            ? 'bg-stone-900 text-white border-stone-900'
+                                            : 'bg-white text-stone-600 border-stone-200 hover:bg-stone-50'
+                                            }`}>
+                                        All Tags
+                                        <span className={`ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full ${!selectedFinancialTag ? 'bg-white/20 text-white' : 'bg-stone-100 text-stone-500'
+                                            }`}>{customers.filter(c => c.financial_tag).length}</span>
+                                    </button>
+                                    {FINANCIAL_TAGS.map(tag => {
+                                        const count = customers.filter(c => c.financial_tag === tag.id).length;
+                                        if (count === 0) return null;
+                                        const colors = FINANCIAL_TAG_COLORS[tag.id] || { bg: 'bg-stone-50', text: 'text-stone-700', border: 'border-stone-200', dot: 'bg-stone-400' };
+                                        const isActive = selectedFinancialTag === tag.id;
+                                        return (
+                                            <button key={tag.id}
+                                                onClick={() => setSelectedFinancialTag(isActive ? null : tag.id)}
+                                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${isActive
+                                                    ? 'bg-stone-900 text-white border-stone-900'
+                                                    : `${colors.bg} ${colors.text} ${colors.border} hover:shadow-sm`
+                                                    }`}>
+                                                <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isActive ? 'bg-white' : colors.dot}`} />
+                                                {tag.label}
+                                                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : `${colors.bg} ${colors.text}`
+                                                    }`}>{count}</span>
+                                            </button>
+                                        );
+                                    })} 
+                                </div>
+
+                                {/* Search bar for financial tags */}
+                                <div className="relative">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 w-4 h-4" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search by name, phone, or CRN..."
+                                        value={searchQuery}
+                                        onChange={e => setSearchQuery(e.target.value)}
+                                        className="w-full pl-11 pr-10 py-3 bg-white border border-stone-200 rounded-2xl text-sm font-medium text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:border-amber-300 transition-all shadow-sm"
+                                    />
+                                    {searchQuery && (
+                                        <button
+                                            onClick={() => setSearchQuery('')}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors p-0.5 rounded-full hover:bg-stone-100"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                </div>
+                                {searchQuery && (
+                                    <p className="text-xs text-stone-500 font-medium -mt-3 px-1">
+                                        <span className="text-amber-600 font-bold">{filtered.length}</span> result{filtered.length !== 1 ? 's' : ''} found for "<span className="text-stone-700">{searchQuery}</span>"
+                                    </p>
+                                )}
+
+                                {filtered.length > 0 ? (
+                                    <>
+                                        {/* Compact summary strip */}
+                                        {(() => {
+                                            const sumQuoted = filtered.reduce((s, c) => s + (Number(c.quoted_amount) || 0), 0);
+                                            const sumReceived = filtered.reduce((s, c) => s + (Number(c.total_received) || 0), 0);
+                                            const sumReceivable = filtered.reduce((s, c) => s + (Number(c.receivables) || 0), 0);
+                                            const collPct = sumQuoted > 0 ? Math.round((sumReceived / sumQuoted) * 100) : 0;
+                                            return (
+                                                <div className="flex flex-wrap items-center gap-4 bg-white rounded-2xl border border-stone-100 shadow-sm px-5 py-3">
+                                                    <div>
+                                                        <p className="text-[9px] font-bold text-stone-400 uppercase">Quoted</p>
+                                                        <p className="text-sm font-bold text-stone-800">₹{(sumQuoted / 100000).toFixed(2)}L</p>
+                                                    </div>
+                                                    <div className="w-px h-8 bg-stone-100" />
+                                                    <div>
+                                                        <p className="text-[9px] font-bold text-stone-400 uppercase">Received</p>
+                                                        <p className="text-sm font-bold text-emerald-600">₹{(sumReceived / 100000).toFixed(2)}L</p>
+                                                    </div>
+                                                    <div className="w-px h-8 bg-stone-100" />
+                                                    <div>
+                                                        <p className="text-[9px] font-bold text-stone-400 uppercase">Receivable</p>
+                                                        <p className="text-sm font-bold text-orange-600">₹{(sumReceivable / 100000).toFixed(2)}L</p>
+                                                    </div>
+                                                    <div className="w-px h-8 bg-stone-100" />
+                                                    <div className="flex items-center gap-2">
+                                                        <div>
+                                                            <p className="text-[9px] font-bold text-stone-400 uppercase">Collection</p>
+                                                            <p className="text-sm font-bold text-stone-800">{collPct}%</p>
+                                                        </div>
+                                                        <div className="w-20 h-1.5 bg-stone-100 rounded-full">
+                                                            <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${Math.min(collPct, 100)}%` }} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
+
+                                        {/* Compact table */}
+                                        <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full text-sm">
+                                                    <thead>
+                                                        <tr className="border-b border-stone-100 bg-stone-50">
+                                                            <th className="text-left px-4 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">Customer</th>
+                                                            <th className="text-right px-3 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">Quoted</th>
+                                                            <th className="text-right px-3 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">Received</th>
+                                                            <th className="text-right px-3 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">Receivable</th>
+                                                            <th className="text-center px-3 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider w-24">Collected</th>
+                                                            <th className="text-left px-3 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">Tag</th>
+                                                            <th className="text-left px-3 py-2.5 text-[10px] font-bold text-stone-400 uppercase tracking-wider">Recent Payment</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className="divide-y divide-stone-50">
+                                                        {filtered.map(c => {
+                                                            const quoted = Number(c.quoted_amount) || 0;
+                                                            const received = Number(c.total_received) || 0;
+                                                            const recv = Number(c.receivables) || 0;
+                                                            const pct = quoted > 0 ? Math.round((received / quoted) * 100) : 0;
+                                                            const payments = Array.isArray(c.payments) ? c.payments : [];
+                                                            const lastPayment = payments.length > 0 ? payments[payments.length - 1] : null;
+                                                            const tagColors = c.financial_tag ? (FINANCIAL_TAG_COLORS[c.financial_tag] || {}) : {};
+                                                            const tagInfo = FINANCIAL_TAGS.find(t => t.id === c.financial_tag);
+                                                            const fmtMoney = (v) => v > 0 ? (v >= 100000 ? `₹${(v / 100000).toFixed(2)}L` : `₹${(v / 1000).toFixed(0)}k`) : '₹0';
+                                                            return (
+                                                                <tr key={c.id}
+                                                                    onClick={() => setSelectedCustomer(c)}
+                                                                    className="hover:bg-amber-50/50 cursor-pointer transition-colors group">
+                                                                    <td className="px-4 py-3">
+                                                                        <p className="font-semibold text-stone-800 text-xs group-hover:text-amber-600 transition-colors">{c.customer_name}</p>
+                                                                        <p className="text-[10px] text-stone-400">{c.crn || 'No CRN'}</p>
+                                                                    </td>
+                                                                    <td className="px-3 py-3 text-right">
+                                                                        <span className="text-xs font-bold text-stone-700">{fmtMoney(quoted)}</span>
+                                                                    </td>
+                                                                    <td className="px-3 py-3 text-right">
+                                                                        <span className="text-xs font-bold text-emerald-600">{fmtMoney(received)}</span>
+                                                                    </td>
+                                                                    <td className="px-3 py-3 text-right">
+                                                                        <span className={`text-xs font-bold ${recv > 0 ? 'text-orange-600' : 'text-emerald-500'}`}>{fmtMoney(recv)}</span>
+                                                                    </td>
+                                                                    <td className="px-3 py-3">
+                                                                        <div className="flex items-center gap-1.5 justify-center">
+                                                                            <div className="w-14 h-1.5 bg-stone-100 rounded-full flex-shrink-0">
+                                                                                <div className={`h-full rounded-full ${pct >= 100 ? 'bg-emerald-500' : pct > 50 ? 'bg-amber-400' : 'bg-orange-400'}`} style={{ width: `${Math.min(pct, 100)}%` }} />
+                                                                            </div>
+                                                                            <span className={`text-[10px] font-bold ${pct >= 100 ? 'text-emerald-600' : 'text-stone-500'}`}>{pct}%</span>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="px-3 py-3">
+                                                                        {tagInfo && (
+                                                                            <span className={`inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-full font-bold uppercase border whitespace-nowrap ${tagColors.bg || 'bg-stone-50'} ${tagColors.text || 'text-stone-500'} ${tagColors.border || 'border-stone-200'}`}>
+                                                                                <span className={`w-1.5 h-1.5 rounded-full ${tagColors.dot || 'bg-stone-400'}`} />
+                                                                                {tagInfo.label}
+                                                                            </span>
+                                                                        )}
+                                                                    </td>
+                                                                    <td className="px-3 py-3">
+                                                                        {lastPayment ? (
+                                                                            <div>
+                                                                                <p className="text-xs font-bold text-stone-700">₹{Number(lastPayment.amount || 0).toLocaleString('en-IN')}</p>
+                                                                                <p className="text-[10px] text-stone-400">{lastPayment.date || '–'}</p>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <span className="text-[10px] text-stone-300">–</span>
+                                                                        )}
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-48 text-stone-400">
+                                        <Tag className="w-10 h-10 mb-3 text-stone-300" />
+                                        <p className="font-medium text-stone-500">{searchQuery ? 'No matching results' : (selectedFinancialTag ? 'No customers with this tag' : 'No financial tags active')}</p>
+                                        <p className="text-sm mt-1">{searchQuery ? 'Try a different search' : 'Tag customers from their detail view'}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )
                     )}
                     {currentView === 'activity' && <ActivityLogView />}
                     {currentView === 'users' && user.userType === 'admin' && <UserManagementView currentUser={user} />}
@@ -2115,8 +2382,28 @@ export default function App() {
         return <AgentForm user={user} onLogout={() => supabase.auth.signOut().then(() => setUser(null))} />;
     }
 
-    // Default: Show the full Admin Dashboard
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        setUser(null);
+    };
+
+    // Default: Return the React Router system mapping dashboard and tools routes
     return (
-        <Dashboard user={user} onLogout={async () => { await supabase.auth.signOut(); setUser(null); }} />
+        <Routes>
+            <Route path="/" element={<Dashboard user={user} onLogout={handleLogout} />} />
+            <Route path="/dashboard" element={<Dashboard user={user} onLogout={handleLogout} />} />
+            <Route path="/tools" element={<ToolsDashboard />} />
+            <Route path="/tools/emi" element={<EMICalculator />} />
+            <Route path="/tools/gst" element={<GSTCalculator />} />
+            <Route path="/tools/packages" element={<PackagePrices />} />
+            <Route path="/tools/invoice" element={<InvoiceGenerator />} />
+            <Route path="/tools/receipt" element={<ReceiptGenerator />} />
+            <Route path="/tools/proforma" element={<ProformaInvoiceGenerator />} />
+            <Route path="/tools/po" element={<PurchaseOrder />} />
+            <Route path="/tools/payslip" element={<PaySlipGenerator />} />
+            <Route path="/tools/warranty" element={<WarrantyGenerator />} />
+            <Route path="/tools/quote" element={<QuoteGenerator />} />
+            <Route path="/tools/rfq" element={<RFQGenerator />} />
+        </Routes>
     );
 }
