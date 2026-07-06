@@ -2,13 +2,13 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main] # Or 'master' if that is your branch name
+    branches: [master] # Or 'master' if that is your branch name
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout 
         uses: actions/checkout@v4
 
       - name: Install and Build 
