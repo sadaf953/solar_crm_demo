@@ -85,7 +85,6 @@ const DEFAULT_PROJECT_CHECKLIST = [
 ];
 
 
-
 function normalizeChecklist(rawChecklist) {
     let storedChecklist = [];
     if (Array.isArray(rawChecklist)) {
@@ -258,93 +257,128 @@ function LoginScreen({ onLogin }) {
 }
 
 // ─── DASHBOARD VIEW ─────────────────────────────────────────────────────────────
-function DashboardView({ customers = [], loading }) {
-    if (loading) return (
-        <div className="p-20 text-center text-stone-400 font-medium italic animate-pulse">
-            Calculating solar metrics...
+// --- 1. THE HELPER (Put this above DashboardView) ---
+const MetricBox = ({ label, value, icon: Icon, color }) => {
+    const colorMap = {
+        amber: 'bg-amber-50 text-amber-600',
+        emerald: 'bg-emerald-50 text-emerald-600',
+        blue: 'bg-blue-50 text-blue-600',
+    };
+    return (
+        <div className="bg-white p-6 rounded-[28px] border border-stone-100 shadow-sm">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-3 ${colorMap[color]}`}>
+                <Icon size={16} />
+            </div>
+            <p className="text-2xl font-bold text-stone-800 tracking-tight">{value}</p>
+            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-0.5">{label}</p>
         </div>
     );
+};
 
-    const totalCap = customers.reduce((s, c) => s + (parseFloat(c.capacity_kwp) || 0), 0);
-    const totalRev = customers.reduce((s, c) => s + (Number(c.quoted_amount) || 0), 0);
-    const totalIn = customers.reduce((s, c) => s + (Number(c.total_received) || 0), 0);
+// --- 2. THE MAIN COMPONENT ---
+function DashboardView({ customers = [], loading }) {
+    if (loading) {
+        return (
+            <div className="p-20 text-center text-stone-400 font-medium italic animate-pulse">
+                Calculating solar metrics...
+            </div>
+        );
+    }
+
+    // Calculations
+    const totalProjects = customers.length;
+    const completedCount = customers.filter(c => c.stage === 'Completed').length;
+    const liveProjects = totalProjects - completedCount;
+
+    const totalQuoted = customers.reduce((s, c) => s + (Number(c.quoted_amount) || 0), 0);
+    const totalReceived = customers.reduce((s, c) => s + (Number(c.total_received) || 0), 0);
+    const totalDues = customers.reduce((s, c) => s + (Number(c.receivables) || 0), 0);
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <MetricBox label="Live Projects" value={customers.length} icon={Sun} color="amber" />
-                <MetricBox label="Solar Capacity" value={`${totalCap.toFixed(1)} kWp`} icon={Zap} color="yellow" />
-                <MetricBox label="Total Sales" value={`₹${(totalRev / 100000).toFixed(1)}L`} icon={IndianRupee} color="emerald" />
-                <MetricBox label="Pending Dues" value={`₹${((totalRev - totalIn) / 100000).toFixed(1)}L`} icon={Wallet} color="orange" />
+            {/* ROW 1: PROJECT VOLUME */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <MetricBox
+                    label="Total Database"
+                    value={totalProjects}
+                    icon={FolderOpen}
+                    color="blue"
+                />
+                <MetricBox
+                    label="Live Projects"
+                    value={liveProjects}
+                    icon={Activity}
+                    color="amber"
+                />
+                <MetricBox
+                    label="Completed"
+                    value={completedCount}
+                    icon={CheckCircle2}
+                    color="emerald"
+                />
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 bg-white rounded-3xl p-8 border border-stone-100 shadow-sm">
-                    <h3 className="text-[11px] font-bold text-stone-400 uppercase tracking-widest mb-8">Operational Pipeline</h3>
-                    <div className="space-y-5">
-                        {PRIMARY_STAGES.slice(0, 11).map(stage => {
-                            const count = customers.filter(c => c.stage === stage.id).length;
-                            const perc = customers.length > 0 ? (count / customers.length) * 100 : 0;
-                            return (
-                                <div key={stage.id} className="space-y-1.5">
-                                    <div className="flex justify-between text-xs font-bold text-stone-600">
-                                        <span>{stage.label}</span><span>{count}</span>
-                                    </div>
-                                    <div className="h-2 bg-stone-50 rounded-full overflow-hidden">
-                                        <div className="h-full bg-amber-400 transition-all duration-1000 rounded-full" style={{ width: `${perc}%` }} />
-                                    </div>
+            {/* ROW 2: FINANCIAL SUMMARY */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white p-6 rounded-[28px] border border-stone-100 shadow-sm">
+                    <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Sales (Quoted)</p>
+                    <p className="text-2xl font-bold text-stone-800">₹{(totalQuoted / 100000).toFixed(2)}L</p>
+                </div>
+                <div className="bg-white p-6 rounded-[28px] border border-stone-100 shadow-sm">
+                    <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Cash Collected</p>
+                    <p className="text-2xl font-bold text-emerald-600">₹{(totalReceived / 100000).toFixed(2)}L</p>
+                </div>
+                <div className="bg-white p-6 rounded-[28px] border border-stone-100 shadow-sm border-b-4 border-b-orange-400">
+                    <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Outstanding Dues</p>
+                    <p className="text-2xl font-bold text-orange-600">₹{(totalDues / 100000).toFixed(2)}L</p>
+                </div>
+            </div>
+
+            {/* ROW 3: OPERATIONAL PIPELINE (Line Method) */}
+            <div className="bg-white rounded-[32px] p-8 border border-stone-100 shadow-sm">
+                <h3 className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-8">Operational Density (Stage Breakdown)</h3>
+                <div className="space-y-6">
+                    {PRIMARY_STAGES.map(stage => {
+                        const count = customers.filter(c => c.stage === stage.id).length;
+                        const perc = totalProjects > 0 ? (count / totalProjects) * 100 : 0;
+
+                        return (
+                            <div key={stage.id} className="group">
+                                <div className="flex justify-between text-[10px] font-bold text-stone-600 mb-1.5 uppercase tracking-tight">
+                                    <span className="group-hover:text-amber-600 transition-colors">{stage.label}</span>
+                                    <span className="text-stone-400">{count}</span>
                                 </div>
-                            );
-                        })}
-                    </div>
+                                <div className="h-1.5 bg-stone-50 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full transition-all duration-1000 rounded-full ${stage.id === 'Completed' ? 'bg-emerald-400' : 'bg-amber-400'}`}
+                                        style={{ width: `${perc}%` }}
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
-                <div className="bg-stone-800 rounded-3xl p-8 text-white flex flex-col justify-between">
-                    <div>
-                        <h4 className="text-[10px] font-bold text-amber-400 uppercase tracking-widest mb-6">Realized Revenue</h4>
-                        <p className="text-3xl font-bold">₹{(totalIn / 100000).toFixed(2)}L</p>
-                        <p className="text-xs text-stone-400 mt-2 font-medium">Actual cash inflow from all payments</p>
-                    </div>
-                    <div className="pt-6 border-t border-stone-700 mt-6">
-                        <TrendingUp size={20} className="text-amber-500" />
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {PRIMARY_STAGES.map(stage => {
-                    const count = customers.filter(c => c.stage === stage.id).length;
-                    return (
-                        <div key={stage.id} className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm text-center">
-                            <p className="text-xl font-bold text-stone-800">{count}</p>
-                            <p className="text-[9px] font-bold text-stone-400 uppercase tracking-wider mt-1 leading-tight">{stage.label}</p>
-                        </div>
-                    );
-                })}
             </div>
         </div>
     );
 }
 
-const MetricBox = ({ label, value, icon: Icon, color }) => {
-    const cMap = {
-        amber: 'bg-amber-50 text-amber-600', yellow: 'bg-yellow-50 text-yellow-600',
-        emerald: 'bg-emerald-50 text-emerald-600', orange: 'bg-orange-50 text-orange-600',
-    };
-    return (
-        <div className="bg-white p-6 rounded-3xl border border-stone-100 shadow-sm hover:border-amber-100 transition-all">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${cMap[color]}`}>
-                <Icon size={18} />
-            </div>
-            <p className="text-2xl font-bold text-stone-800 tracking-tight">{value}</p>
-            <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-1">{label}</p>
-        </div>
-    );
-};
+
 
 // ─── FINANCIAL SIDEBAR VIEW ─────────────────────────────────────────────────────
-// Shows all customers with a financial_tag, grouped by tag type
+
 function FinancialSidebarView({ customers, onSelectCustomer }) {
+    const [activeFilter, setActiveFilter] = useState(null);
+
     const tagged = customers.filter(c => c.financial_tag);
+
+    // --- 1. CALCULATE MONEY TOTALS ---
+    const totals = tagged.reduce((acc, c) => {
+        acc.quoted += (Number(c.quoted_amount) || 0);
+        acc.received += (Number(c.total_received) || 0);
+        acc.receivable += (Number(c.receivables) || 0);
+        return acc;
+    }, { quoted: 0, received: 0, receivable: 0 });
 
     const grouped = FINANCIAL_TAGS.reduce((acc, tag) => {
         const group = tagged.filter(c => c.financial_tag === tag.id);
@@ -352,50 +386,70 @@ function FinancialSidebarView({ customers, onSelectCustomer }) {
         return acc;
     }, {});
 
-    const totalPending = tagged.reduce((s, c) => s + (Number(c.receivables) || 0), 0);
-
     if (tagged.length === 0) {
         return (
             <div className="flex flex-col items-center justify-center h-64 text-stone-400">
                 <Tag className="w-10 h-10 mb-3 text-stone-300" />
                 <p className="font-medium text-stone-500 text-sm">No financial tags active</p>
-                <p className="text-xs mt-1 text-stone-400">Tag customers from their detail view</p>
             </div>
         );
     }
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            {/* Summary bar */}
+
+            {/* --- MONEY SUMMARY BOXES (New) --- */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Quoted</p>
+                    <p className="text-2xl font-bold text-stone-800">₹{(totals.quoted / 100000).toFixed(2)}L</p>
+                </div>
+                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Received</p>
+                    <p className="text-2xl font-bold text-emerald-600">₹{(totals.received / 100000).toFixed(2)}L</p>
+                </div>
+                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm border-b-4 border-b-orange-400">
+                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Receivable</p>
+                    <p className="text-2xl font-bold text-orange-600">₹{(totals.receivable / 100000).toFixed(2)}L</p>
+                </div>
+            </div>
+
+            {/* --- TAG FILTER BUTTONS (Your preferred UI) --- */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm col-span-2">
-                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Tagged Customers</p>
-                    <p className="text-2xl font-bold text-stone-800">{tagged.length}</p>
-                </div>
-                <div className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm col-span-2">
-                    <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Receivables</p>
-                    <p className="text-2xl font-bold text-orange-600">₹{(totalPending / 100000).toFixed(2)}L</p>
-                </div>
+                <button
+                    onClick={() => setActiveFilter(null)}
+                    className={`rounded-2xl p-4 border text-left transition-all ${activeFilter === null ? 'bg-stone-900 border-stone-900 text-white shadow-lg' : 'bg-white border-stone-100 text-stone-800 hover:border-stone-200'}`}
+                >
+                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-60">All Tagged</p>
+                    <p className="text-2xl font-bold">{tagged.length}</p>
+                </button>
+
                 {FINANCIAL_TAGS.map(tag => {
-                    const count = (grouped[tag.id] || []).length;
-                    if (count === 0) return null;
-                    const colors = FINANCIAL_TAG_COLORS[tag.id] || { bg: 'bg-stone-50', text: 'text-stone-700', border: 'border-stone-200', dot: 'bg-stone-400' };
+                    const groupCount = (grouped[tag.id] || []).length;
+                    if (groupCount === 0) return null;
+                    const colors = FINANCIAL_TAG_COLORS[tag.id] || {};
+                    const isSelected = activeFilter === tag.id;
+
                     return (
-                        <div key={tag.id} className={`rounded-2xl p-3 border ${colors.bg} ${colors.border}`}>
+                        <button
+                            key={tag.id}
+                            onClick={() => setActiveFilter(isSelected ? null : tag.id)}
+                            className={`rounded-2xl p-3 border transition-all text-left ${isSelected ? 'ring-2 ring-stone-900 ring-offset-2' : ''} ${colors.bg} ${colors.border}`}
+                        >
                             <p className={`text-[9px] font-bold uppercase tracking-widest mb-0.5 ${colors.text}`}>{tag.label}</p>
-                            <p className={`text-xl font-bold ${colors.text}`}>{count}</p>
-                        </div>
+                            <p className={`text-xl font-bold ${colors.text}`}>{groupCount}</p>
+                        </button>
                     );
                 })}
             </div>
 
-            {/* Grouped lists */}
-            {FINANCIAL_TAGS.map(tag => {
+            {/* --- GROUPED LISTING (Original Layout) --- */}
+            {FINANCIAL_TAGS.filter(tag => !activeFilter || activeFilter === tag.id).map(tag => {
                 const group = grouped[tag.id];
                 if (!group) return null;
-                const colors = FINANCIAL_TAG_COLORS[tag.id] || { bg: 'bg-stone-50', text: 'text-stone-700', border: 'border-stone-200', dot: 'bg-stone-400' };
+                const colors = FINANCIAL_TAG_COLORS[tag.id] || {};
                 return (
-                    <div key={tag.id}>
+                    <div key={tag.id} className="animate-in slide-in-from-bottom-2 duration-300">
                         <div className="flex items-center gap-2 mb-3">
                             <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${colors.dot}`} />
                             <h3 className="text-xs font-bold text-stone-700 uppercase tracking-widest">{tag.label}</h3>
@@ -403,7 +457,7 @@ function FinancialSidebarView({ customers, onSelectCustomer }) {
                                 {group.length}
                             </span>
                         </div>
-                        <div className="space-y-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                             {group.map(c => {
                                 const recv = Number(c.receivables) || 0;
                                 const totalRec = Number(c.total_received) || 0;
@@ -419,10 +473,8 @@ function FinancialSidebarView({ customers, onSelectCustomer }) {
                                                     {c.crn || 'No CRN'} · {c.location || 'No Location'}
                                                 </p>
                                             </div>
-                                            <span className="text-[9px] bg-stone-50 text-stone-400 px-2 py-1 rounded font-bold uppercase ml-2 whitespace-nowrap">
-                                                {PRIMARY_STAGES.find(s => s.id === c.stage)?.label || c.stage}
-                                            </span>
                                         </div>
+
                                         <div className="grid grid-cols-3 gap-2 pt-2 border-t border-stone-50">
                                             <div>
                                                 <p className="text-[9px] text-stone-400 font-bold uppercase">Quoted</p>
@@ -433,17 +485,12 @@ function FinancialSidebarView({ customers, onSelectCustomer }) {
                                                 <p className="text-xs font-bold text-emerald-600">₹{(totalRec / 1000).toFixed(0)}k</p>
                                             </div>
                                             <div>
-                                                <p className="text-[9px] text-stone-400 font-bold uppercase">Receivable</p>
+                                                <p className="text-[9px] text-stone-400 font-bold uppercase">Pending</p>
                                                 <p className={`text-xs font-bold ${recv > 0 ? 'text-orange-500' : 'text-emerald-500'}`}>
                                                     ₹{(recv / 1000).toFixed(0)}k
                                                 </p>
                                             </div>
                                         </div>
-                                        {c.poc && (
-                                            <p className="text-[10px] text-stone-400 mt-2 flex items-center gap-1">
-                                                <User className="w-2.5 h-2.5" /> {c.poc}
-                                            </p>
-                                        )}
                                     </button>
                                 );
                             })}
@@ -865,7 +912,7 @@ function CustomerDetailModal({ customer, onClose, onUpdate, onDelete, user, meta
         await onUpdate(customer.id, { financial_tag: newTag });
 
         const tagLabel = FINANCIAL_TAGS.find(t => t.id === tagId)?.label || tagId;
-        logActivity(user.id, 'update', `${customer.customer_name}: Financial tag — ${tagLabel}`, customer.id);
+        logActivity(user.id, 'update', `${customer.customer_name}: Financial tag - ${tagLabel}`, customer.id);
         fetchLogs();
     };
 
@@ -983,12 +1030,24 @@ function CustomerDetailModal({ customer, onClose, onUpdate, onDelete, user, meta
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="bg-white p-4 rounded-2xl border border-stone-100 shadow-sm">
                                     <label className="text-[9px] text-stone-400 font-bold uppercase mb-2 block">Primary Stage</label>
-                                    <select value={editData.stage} onChange={async (e) => {
-                                        const oldStage = customer.stage;
-                                        await onUpdate(customer.id, { stage: e.target.value });
-                                        await logActivity(user.id, 'stage_change', `STAGE: ${oldStage} → ${e.target.value}`, customer.id);
-                                        fetchLogs();
-                                    }} className="w-full p-2 bg-stone-50 border-none rounded-xl text-sm font-bold text-stone-700 outline-none">
+                                    <select
+                                        value={editData.stage}
+                                        onChange={async (e) => {
+                                            const newStage = e.target.value;
+                                            const oldStage = editData.stage;
+
+                                            // 1. Update local state so the dropdown moves immediately
+                                            setEditData(prev => ({ ...prev, stage: newStage }));
+
+                                            // 2. Update the database/parent
+                                            await onUpdate(customer.id, { stage: newStage });
+
+                                            // 3. Log the history and refresh logs
+                                            await logActivity(user.id, 'stage_change', `STAGE: ${oldStage} → ${newStage}`, customer.id);
+                                            fetchLogs();
+                                        }}
+                                        className="w-full p-2.5 bg-white border border-stone-200 rounded-xl font-bold text-stone-700 outline-none"
+                                    >
                                         {PRIMARY_STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                                     </select>
                                 </div>
@@ -1655,29 +1714,7 @@ function Dashboard({ user, onLogout }) {
                                 </span>
                             )}
                         </button>
-                        {/* Mini tag breakdown — visible always in sidebar */}
-                        <div className="px-3 pb-2 space-y-1">
-                            {FINANCIAL_TAGS.map(tag => {
-                                const count = customers.filter(c => c.financial_tag === tag.id).length;
-                                if (count === 0) return null;
-                                const colors = FINANCIAL_TAG_COLORS[tag.id] || {};
-                                return (
-                                    <button key={tag.id}
-                                        onClick={() => { setCurrentView('financial'); setSidebarOpen(false); }}
-                                        className="w-full flex items-center justify-between px-2 py-1 rounded-lg hover:bg-stone-50 transition-colors">
-                                        <div className="flex items-center gap-1.5">
-                                            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${colors.dot || 'bg-stone-400'}`} />
-                                            <span className="text-[10px] text-stone-500 font-medium truncate">{tag.label}</span>
-                                        </div>
-                                        <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold border ${colors.bg || 'bg-stone-50'} ${colors.text || 'text-stone-500'} ${colors.border || 'border-stone-200'}`}>
-                                            {count}
-                                        </span>
-                                    </button>
-                                );
-                            })}
-                        </div>
                     </div>
-
                     {/* ── Project Stages ── */}
                     <div className="text-[9px] uppercase font-bold text-stone-300 px-3 pt-4 pb-2 tracking-widest">Project Stages</div>
                     {PRIMARY_STAGES.map(s => (
